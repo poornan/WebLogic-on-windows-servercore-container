@@ -1,0 +1,3 @@
+@rem jdk-8u301-windows-x64.exe INSTALLCFG=java-config.txt
+@REM /s ADDLOCAL="ToolsFeature,SourceFeature"
+CMD /K jdk-8u301-windows-x64.exe INSTALL_SILENT=Enable INSTALLDIR=C:\java\jdk
