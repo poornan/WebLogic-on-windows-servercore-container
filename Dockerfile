@@ -1,6 +1,6 @@
 # escape=`
 
-FROM mcr.microsoft.com/windows/servercore:1809
+FROM mcr.microsoft.com/windows/servercore:1809 as builder
 
 COPY jdk-8u301-windows-x64.exe .
 
@@ -8,7 +8,16 @@ COPY jdk-8u301-windows-x64.exe .
 
 SHELL ["cmd", "/K"]
 RUN jdk-8u301-windows-x64.exe INSTALL_SILENT=Enable INSTALLDIR=C:\java\jdk
-#RUN cmd /K jdk-8u301-windows-x64.exe INSTALL_SILENT=Enable INSTALLDIR=C:\java\jdk
-#RUN ["jdk-8u301-windows-x64.exe", "INSTALL_SILENT=Enable", "INSTALLDIR=java\jdk"]
-#RUN cmd install-java.bat
-# RUN setx PATH "C:\java\jdk\bin;%PATH%"
+
+FROM mcr.microsoft.com/windows/nanoserver:1809
+COPY --from=builder "C:\java\jdk" "C:\java\jdk"
+USER ContainerAdministrator
+RUN setx PATH "C:\java\jdk\bin;%PATH%"
+#CMD setx PATH "C:\java\jdk\bin;%PATH%"
+
+
+#USER ContainerAdministrator
+#RUN echo Updating PATH: %JAVA_HOME%\bin;%PATH% \
+#    && setx /M PATH %JAVA_HOME%\bin;%PATH% \
+#    && echo Complete.
+#USER ContainerUser
