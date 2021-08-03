@@ -1,0 +1,38 @@
+# escape=`
+
+FROM mcr.microsoft.com/windows/servercore:1809 as builder
+
+COPY server-jre-8u301-windows-x64.zip .
+ENV JAVA_HOME=C:\java\serverjre
+ENV FILE_NAME=server-jre-8u301-windows-x64.zip
+ENV EXPAND=C:\temp\server-jre-8u301-windows-x64\jdk1.8.0_301
+
+# $ProgressPreference: https://github.com/PowerShell/PowerShell/issues/2138#issuecomment-251261324
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN Write-Host 'Expanding ...'; `
+	New-Item -ItemType Directory -Path C:\temp | Out-Null; `
+	Expand-Archive $Env:FILE_NAME -DestinationPath C:\temp\; `
+	New-Item -ItemType directory -Path $Env:JAVA_HOME;`
+	Get-ChildItem $Env:EXPAND;`
+	Move-Item -Path $Env:EXPAND\* -Destination $Env:JAVA_HOME -Force; `
+	Get-ChildItem $Env:JAVA_HOME;`
+	`
+	Write-Host 'Removing ...'; `
+	Remove-Item $Env:FILE_NAME -Force;
+
+FROM mcr.microsoft.com/windows/nanoserver:1809
+ENV JAVA_HOME=C:\java\serverjre
+COPY --from=builder $JAVA_HOME $JAVA_HOME
+
+USER ContainerAdministrator
+RUN echo Updating PATH: C:\java\serverjre\bin;%PATH% `
+  && setx /M PATH C:\java\serverjre\bin;%PATH% `
+  && echo %PATH% `
+  && echo Complete.
+USER ContainerUser
+
+RUN echo Verifying install ... `
+  && echo java -version && java -version `
+  && echo javac -version && javac -version `
+  && echo Complete.

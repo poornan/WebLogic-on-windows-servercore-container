@@ -1,6 +1,7 @@
 docker run -it dockeronwindows/java0:ananth cmd.exe
 
 docker image build -t dockeronwindows/java0:ananth .
+docker image build --file Dockerfile.server -t dockeronwindows/ser-java0:ananth .
 
 docker image build --rm=false -t dockeronwindows/java0:ananth .
 
