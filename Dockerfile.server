@@ -1,6 +1,6 @@
 # escape=`
 
-FROM mcr.microsoft.com/windows/servercore:1809 as builder
+FROM mcr.microsoft.com/windows/servercore:ltsc2019 as builder
 
 COPY server-jre-8u301-windows-x64.zip .
 ENV JAVA_HOME=C:\java\serverjre
@@ -21,13 +21,13 @@ RUN Write-Host 'Expanding ...'; `
 	Write-Host 'Removing ...'; `
 	Remove-Item $Env:FILE_NAME -Force;
 
-FROM mcr.microsoft.com/windows/nanoserver:1809
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
 ENV JAVA_HOME=C:\java\serverjre
 COPY --from=builder $JAVA_HOME $JAVA_HOME
 
 USER ContainerAdministrator
-RUN echo Updating PATH: C:\java\serverjre\bin;%PATH% `
-  && setx /M PATH C:\java\serverjre\bin;%PATH% `
+RUN echo Updating PATH: %JAVA_HOME%\bin;%PATH% `
+  && setx /M PATH %JAVA_HOME%\bin;%PATH% `
   && echo %PATH% `
   && echo Complete.
 USER ContainerUser
