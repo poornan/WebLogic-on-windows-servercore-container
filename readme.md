@@ -6,7 +6,7 @@ docker run -it oracle/weblogic:12.2.1.3-developer cmd.exe
 
 docker run -d -p 7001:7001 -p 9002:9002 -v C:\u01\oracle\properties:C:\u01\oracle\properties -e ADMINISTRATION_PORT_ENABLED=true -e DOMAIN_NAME=docker_domain oracle/ --name WLS weblogic:12.2.1.3-developer
 
-docker run --name WLS -d -p 7001:7001 -p 9002:9002 -v C:\u01\oracle\properties:C:\u01\oracle\properties -e ADMINISTRATION_PORT_ENABLED=true -e DOMAIN_NAME=docker_domain oracle/weblogic:12.2.1.3-developer
+docker run --name WLS -d -p 7001:7001 -p 9002:9002 -v C:\u01\oracle\properties:C:\u01\oracle\properties -e ADMINISTRATION_PORT_ENABLED=false -e DOMAIN_NAME=docker_domain oracle/weblogic:12.2.1.3-developer
 
 docker run -it --name WLS oracle/weblogic:12.2.1.3-developer cmd.exe
 
